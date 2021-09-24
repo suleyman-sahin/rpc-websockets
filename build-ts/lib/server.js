@@ -320,6 +320,16 @@ export default class Server extends EventEmitter {
             }
         });
     }
+    notificationBroadcast(event, params, ns = "/") {
+        for (const socket of this.namespaces[ns].clients.values()) {
+            socket.send(CircularJSON.stringify({
+                jsonrpc: "2.0",
+                method: event,
+                params: params || null,
+                id: uuidv1()
+            }));
+        }
+    }
     /**
      * Handles all WebSocket JSON RPC 2.0 requests.
      * @private

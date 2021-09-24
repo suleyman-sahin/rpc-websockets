@@ -183,6 +183,7 @@ export default class Server extends EventEmitter {
      * @return {Promise}
      */
     close(): Promise<unknown>;
+    notificationBroadcast(event: string, params: any, ns?: string): void;
     /**
      * Handles all WebSocket JSON RPC 2.0 requests.
      * @private

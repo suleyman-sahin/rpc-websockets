@@ -477,6 +477,30 @@ var Server = /*#__PURE__*/function (_EventEmitter) {
         }
       });
     }
+  }, {
+    key: "notificationBroadcast",
+    value: function notificationBroadcast(event, params) {
+      var ns = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "/";
+
+      var _iterator3 = _createForOfIteratorHelper(this.namespaces[ns].clients.values()),
+          _step3;
+
+      try {
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+          var socket = _step3.value;
+          socket.send(_circularJson["default"].stringify({
+            jsonrpc: "2.0",
+            method: event,
+            params: params || null,
+            id: (0, _uuid.v1)()
+          }));
+        }
+      } catch (err) {
+        _iterator3.e(err);
+      } finally {
+        _iterator3.f();
+      }
+    }
     /**
      * Handles all WebSocket JSON RPC 2.0 requests.
      * @private
@@ -493,7 +517,7 @@ var Server = /*#__PURE__*/function (_EventEmitter) {
       var ns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "/";
       socket.on("message", /*#__PURE__*/function () {
         var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(data) {
-          var msg_options, parsedData, responses, _iterator3, _step3, message, _response, response;
+          var msg_options, parsedData, responses, _iterator4, _step4, message, _response, response;
 
           return _regenerator["default"].wrap(function _callee$(_context) {
             while (1) {
@@ -547,18 +571,18 @@ var Server = /*#__PURE__*/function (_EventEmitter) {
 
                 case 14:
                   responses = [];
-                  _iterator3 = _createForOfIteratorHelper(parsedData);
+                  _iterator4 = _createForOfIteratorHelper(parsedData);
                   _context.prev = 16;
 
-                  _iterator3.s();
+                  _iterator4.s();
 
                 case 18:
-                  if ((_step3 = _iterator3.n()).done) {
+                  if ((_step4 = _iterator4.n()).done) {
                     _context.next = 28;
                     break;
                   }
 
-                  message = _step3.value;
+                  message = _step4.value;
                   _context.next = 22;
                   return _this5._runMethod(message, socket._id, ns);
 
@@ -587,12 +611,12 @@ var Server = /*#__PURE__*/function (_EventEmitter) {
                   _context.prev = 30;
                   _context.t1 = _context["catch"](16);
 
-                  _iterator3.e(_context.t1);
+                  _iterator4.e(_context.t1);
 
                 case 33:
                   _context.prev = 33;
 
-                  _iterator3.f();
+                  _iterator4.f();
 
                   return _context.finish(33);
 
@@ -653,15 +677,15 @@ var Server = /*#__PURE__*/function (_EventEmitter) {
         var ns,
             results,
             event_names,
-            _iterator4,
-            _step4,
+            _iterator5,
+            _step5,
             name,
             index,
             namespace,
             socket_index,
             _results,
-            _iterator5,
-            _step5,
+            _iterator6,
+            _step6,
             _name,
             _index,
             response,
@@ -753,18 +777,18 @@ var Server = /*#__PURE__*/function (_EventEmitter) {
               case 14:
                 results = {};
                 event_names = Object.keys(this.namespaces[ns].events);
-                _iterator4 = _createForOfIteratorHelper(message.params);
+                _iterator5 = _createForOfIteratorHelper(message.params);
                 _context2.prev = 17;
 
-                _iterator4.s();
+                _iterator5.s();
 
               case 19:
-                if ((_step4 = _iterator4.n()).done) {
+                if ((_step5 = _iterator5.n()).done) {
                   _context2.next = 36;
                   break;
                 }
 
-                name = _step4.value;
+                name = _step5.value;
                 index = event_names.indexOf(name);
                 namespace = this.namespaces[ns];
 
@@ -815,12 +839,12 @@ var Server = /*#__PURE__*/function (_EventEmitter) {
                 _context2.prev = 38;
                 _context2.t0 = _context2["catch"](17);
 
-                _iterator4.e(_context2.t0);
+                _iterator5.e(_context2.t0);
 
               case 41:
                 _context2.prev = 41;
 
-                _iterator4.f();
+                _iterator5.f();
 
                 return _context2.finish(41);
 
@@ -850,18 +874,18 @@ var Server = /*#__PURE__*/function (_EventEmitter) {
 
               case 50:
                 _results = {};
-                _iterator5 = _createForOfIteratorHelper(message.params);
+                _iterator6 = _createForOfIteratorHelper(message.params);
                 _context2.prev = 52;
 
-                _iterator5.s();
+                _iterator6.s();
 
               case 54:
-                if ((_step5 = _iterator5.n()).done) {
+                if ((_step6 = _iterator6.n()).done) {
                   _context2.next = 67;
                   break;
                 }
 
-                _name = _step5.value;
+                _name = _step6.value;
 
                 if (this.namespaces[ns].events[_name]) {
                   _context2.next = 59;
@@ -899,12 +923,12 @@ var Server = /*#__PURE__*/function (_EventEmitter) {
                 _context2.prev = 69;
                 _context2.t1 = _context2["catch"](52);
 
-                _iterator5.e(_context2.t1);
+                _iterator6.e(_context2.t1);
 
               case 72:
                 _context2.prev = 72;
 
-                _iterator5.f();
+                _iterator6.f();
 
                 return _context2.finish(72);
 
