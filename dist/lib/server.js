@@ -377,7 +377,9 @@ var Server = /*#__PURE__*/function (_EventEmitter) {
           }
 
           for (var i = 0, id; id = socket_ids[i]; ++i) {
-            self.namespaces[name].clients.get(id).send(_circularJson["default"].stringify({
+            var socket = self.namespaces[name].clients.get(id);
+            console.log(socket);
+            socket.send(_circularJson["default"].stringify({
               notification: event,
               params: params || []
             }));
