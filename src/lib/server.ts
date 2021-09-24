@@ -6,9 +6,9 @@
 "use strict"
 
 // @ts-ignore
-import { EventEmitter } from "eventemitter3"
-import NodeWebSocket, { Server as WebSocketServer } from "ws"
-import { v1 as uuidv1 } from "uuid"
+import {EventEmitter} from "eventemitter3"
+import NodeWebSocket, {Server as WebSocketServer} from "ws"
+import {v1 as uuidv1} from "uuid"
 import url from "url"
 import CircularJSON from "circular-json"
 
@@ -352,7 +352,7 @@ export default class Server extends EventEmitter
              */
             emit(event: string, ...params: Array<string>)
             {
-                const socket_ids = [ ...self.namespaces[name].clients.keys() ]
+                const socket_ids = [...self.namespaces[name].clients.keys()]
 
                 for (let i = 0, id; id = socket_ids[i]; ++i)
                 {
@@ -385,7 +385,7 @@ export default class Server extends EventEmitter
              */
             connected()
             {
-                const socket_ids = [ ...self.namespaces[name].clients.keys() ]
+                const socket_ids = [...self.namespaces[name].clients.keys()]
 
                 return socket_ids.reduce((acc, curr) => ({
                     ...acc,
@@ -452,9 +452,24 @@ export default class Server extends EventEmitter
                 this.emit("close")
                 resolve()
             }
-
-            catch (error) { reject(error) }
+            catch (error)
+            {
+                reject(error)
+            }
         })
+    }
+
+    notificationBroadcast(event: string, params: any, ns = "/")
+    {
+        for (const socket of this.namespaces[ns].clients.values())
+        {
+            socket.send(CircularJSON.stringify({
+                jsonrpc: "2.0",
+                method: event,
+                params: params || null,
+                id: uuidv1()
+            }))
+        }
     }
 
     /**
@@ -466,7 +481,7 @@ export default class Server extends EventEmitter
      */
     private _handleRPC(socket: IClientWebSocket, ns = "/")
     {
-        socket.on("message", async(data) =>
+        socket.on("message", async (data) =>
         {
             const msg_options: Parameters<NodeWebSocket["send"]>[1] = {}
 
@@ -482,8 +497,10 @@ export default class Server extends EventEmitter
 
             let parsedData: any
 
-            try { parsedData = JSON.parse(data as string) }
-
+            try
+            {
+                parsedData = JSON.parse(data as string)
+            }
             catch (error)
             {
                 return socket.send(JSON.stringify({
@@ -700,7 +717,6 @@ export default class Server extends EventEmitter
             response = await this.namespaces[ns].rpc_methods[message.method]
                 .fn(message.params, socket_id)
         }
-
         catch (error)
         {
             if (!message.id)
